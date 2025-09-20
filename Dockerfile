@@ -2,9 +2,7 @@ FROM alpine:edge AS build
 
 RUN apk update && \
     apk --no-cache upgrade && \
-    apk add --no-cache alpine-sdk git pkgconf autoconf automake bash \
-        cmake curl-dev ffmpeg-dev fmt-dev spdlog-dev zstd-dev sqlite-dev \
-        openssl-dev libebur128-dev taglib-dev
+    apk add --no-cache alpine-sdk git pkgconf autoconf automake
 
 WORKDIR /root
 
