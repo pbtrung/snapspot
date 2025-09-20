@@ -1,31 +1,16 @@
 #!/bin/ash
 
-snapserver --config "$1" &
+snapserver --config "/music/snapserver.conf" &
 
 mkdir -p /music/oauth
-socket="/tmp/gwsocket"
-rm -f "$socket"
-mkfifo "$socket"
 librespot --name music \
     --cache /music/oauth \
     --enable-oauth \
     --backend pipe \
-    --device "$socket" \
-    --passthrough \
+    --device /tmp/snapfifo \
     --bitrate 320 \
     --autoplay on \
     --initial-volume 100 \
     --cache-size-limit 100M \
     --enable-volume-normalisation \
-    --normalisation-gain-type track &
-
-music_pid=$!
-gwsocket --port=9000 --addr=0.0.0.0 --std < "$socket" &
-gwsocket_pid=$!
-
-# Wait for music to exit
-wait $music_pid
-# Kill gwsocket when music exits
-kill -TERM $gwsocket_pid 2>/dev/null
-wait $gwsocket_pid 2>/dev/null
-rm "$socket"
+    --normalisation-gain-type track
