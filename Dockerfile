@@ -3,7 +3,8 @@ FROM alpine:edge AS build
 RUN apk update && \
     apk --no-cache upgrade && \
     apk add --no-cache alpine-sdk git pkgconf autoconf automake \
-        cargo rust-bindgen nasm cmake clang-libclang openssl-dev
+        cargo rust-bindgen nasm cmake clang-libclang openssl-dev \
+        alsa-lib-dev
 
 WORKDIR /root
 
@@ -16,7 +17,7 @@ RUN git clone https://github.com/allinurl/gwsocket && \
 RUN git clone https://github.com/librespot-org/librespot && \
     cd librespot && \
     cargo build --release --no-default-features \
-        --features "native-tls passthrough-decoder"
+        --features "native-tls alsa-backend passthrough-decoder"
 
 FROM alpine:edge
 
@@ -24,7 +25,7 @@ RUN echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/a
 
 RUN apk update && \
     apk --no-cache upgrade && \
-    apk --no-cache add snapcast-server snapweb@testing
+    apk --no-cache add alsa-lib snapcast-server snapweb@testing
 
 COPY --from=build /root/gwsocket/gwsocket /usr/bin/
 COPY --from=build /root/librespot/target/release/librespot /usr/bin/
