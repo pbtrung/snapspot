@@ -16,7 +16,7 @@ RUN git clone https://github.com/allinurl/gwsocket && \
 RUN git clone https://github.com/librespot-org/librespot && \
     cd librespot && \
     cargo build --release --no-default-features \
-        --features "native-tls passthrough-decoder rodio-backend"
+        --features "native-tls passthrough-decoder"
 
 FROM alpine:edge
 
