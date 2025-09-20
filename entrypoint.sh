@@ -9,7 +9,7 @@ librespot --name music \
     --enable-oauth \
     --backend pipe \
     --device "$socket" \
-    --passthrough \
+    --passthrough on \
     --bitrate 320 \
     --autoplay on \
     --initial-volume 100 \
