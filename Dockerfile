@@ -2,7 +2,8 @@ FROM alpine:edge AS build
 
 RUN apk update && \
     apk --no-cache upgrade && \
-    apk add --no-cache alpine-sdk git pkgconf autoconf automake
+    apk add --no-cache alpine-sdk git pkgconf autoconf automake \
+        cargo rust-bindgen nasm cmake clang-libclang openssl-dev
 
 WORKDIR /root
 
@@ -12,15 +13,21 @@ RUN git clone https://github.com/allinurl/gwsocket && \
     ./configure && \
     make
 
+RUN git clone https://github.com/librespot-org/librespot && \
+    cd librespot && \
+    cargo build --release --no-default-features \
+        --features "native-tls passthrough-decoder rodio-backend"
+
 FROM alpine:edge
 
 RUN echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
 
 RUN apk update && \
     apk --no-cache upgrade && \
-    apk --no-cache add snapcast-server snapweb@testing librespot@testing
+    apk --no-cache add snapcast-server snapweb@testing
 
 COPY --from=build /root/gwsocket/gwsocket /usr/bin/
+COPY --from=build /root/librespot/target/release/librespot /usr/bin/
 
 WORKDIR /script
 COPY entrypoint.sh /script/
