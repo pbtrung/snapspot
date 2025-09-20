@@ -4,6 +4,8 @@ snapserver --config "$1" &
 
 mkdir -p /music/oauth
 socket="/tmp/gwsocket"
+rm -f "$socket"
+mkfifo "$socket"
 librespot --name music \
     --cache /music/oauth \
     --enable-oauth \
